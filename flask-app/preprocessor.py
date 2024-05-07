@@ -34,7 +34,8 @@ class Preprocessor:
 
 if __name__ == "__main__":
     # TEST CODES
-    preprocessor = Preprocessor(image_size=528, tol=7, sigmax=10)
+    image_size = 380
+    preprocessor = Preprocessor(image_size=image_size, tol=7, sigmax=10)
 
     # Read an example image from sample folder
     image_path = "samples/moderate/00a8624548a9.png"
@@ -49,6 +50,3 @@ if __name__ == "__main__":
     cv2.imshow("Sample image", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-
-

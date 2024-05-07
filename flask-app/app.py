@@ -7,7 +7,7 @@ import base64
 from io import BytesIO
 
 # Our classes
-from models import BinaryModel, MultiClassModel
+from model import DetectionModel
 from preprocessor import Preprocessor
 
 app = Flask(__name__)
@@ -17,12 +17,12 @@ global binaryModel
 global multiClassModel
 global preprocessor
 
-# binaryModel = BinaryModel(model_path="saved_models\dr_binary_model", threshold=0.5)
-# multiClassModel = MultiClassModel(model_path="saved_models/dr_multiclass_model")
-# preprocessor = Preprocessor(image_size=528)
+binaryModel = DetectionModel(model_path="saved_models/efficientnetb4_binary_exported_model", threshold=0.5)
+multiClassModel = DetectionModel(model_path="saved_models/efficientnetb4_multiclass_exported_model")
+preprocessor = Preprocessor(image_size=380)
 
 @app.route("/status", methods=['GET'])
-def sayHello():
+def checkStatus():
     return jsonify({'Status': 'System online'}), 200
 
 @app.route("/dr/image/upload", methods=['POST'])
@@ -47,12 +47,12 @@ def upload_image():
 
         # Preprocess the image
         image_array = np.array(image)
-        preprocessor = Preprocessor(image_size=528)
         preprocessed_image = preprocessor.preprocessing(image_array)
 
         # Convert preprocessed_image to base64
         image_pil = Image.fromarray(preprocessed_image)
         # image_pil.show()
+
         buffered = BytesIO()
         image_pil.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
@@ -61,17 +61,18 @@ def upload_image():
         # Make a prediction
         inference_start = time.perf_counter()
 
-        # Binary Classification
-        prediction_result =  binaryModel.prediction(preprocessed_image)
-        prediction_result = prediction_result.tolist()
+        # Binary Classification  
+        binary_prediction_result = binaryModel.prediction(image_array=preprocessed_image).numpy()
+        binary_prediction_result = binary_prediction_result.tolist()[0]
+        # print(binary_prediction_result[0])
 
         # Multi-class Classification
-        if(prediction_result[0][0] >= 0.5):
-            multiclass_prediction_result = multiClassModel.prediction(image_array=preprocessed_image)
-            multiclass_prediction_result = multiclass_prediction_result.tolist()
+        if(binary_prediction_result[0] >= 0.5):
+            multiclass_prediction_result = multiClassModel.prediction(image_array=preprocessed_image).numpy()
+            multiclass_prediction_result = multiclass_prediction_result.tolist()[0]
+            # print(multiclass_prediction_result[0])
         else:
             multiclass_prediction_result = [[0.0, 0.0, 0.0, 0.0]]
-
 
         inference_end = time.perf_counter()
         inference_time = inference_end - inference_start
@@ -85,7 +86,7 @@ def upload_image():
             'response_time' : response_time, # float
             'filename': filename, # string
             'inference_time': inference_time, # float
-            'prediction_result' : prediction_result, # list
+            'binary_prediction_result' : binary_prediction_result, # list
             'preprocessed_image' : preprocessed_base64_image, # base64
             'multiclass_prediction_result' : multiclass_prediction_result # list
             }), 200
