@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  drflaskapp:
+    container_name: drflaskappcontainer
+    build: .
+    image: anildursunipek/drflaskapp:v1
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
+    networks:
+      - internalnet
+    restart: always
+  
+networks:
+  internalnet:
+    driver: bridge

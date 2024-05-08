@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 import time
-import sys
 from PIL import Image
 import warnings
 warnings.filterwarnings("ignore")
