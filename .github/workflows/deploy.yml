@@ -17,4 +17,4 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        script: cd /root/diabetic-retinopathy-web-service && git checkout prod && git pull && bash start.sh
+        script: cd /root/diabetic-retinopathy-backend && git checkout prod && git pull && bash start.sh
