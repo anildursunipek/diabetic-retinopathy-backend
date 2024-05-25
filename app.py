@@ -12,7 +12,7 @@ from model import DetectionModel
 from preprocessor import Preprocessor
 
 app = Flask(__name__)
-CORS(app, resources={r"/dr/image/upload": {"origins": "http://localhost:4200"}})
+CORS(app, resources={r"/dr/image/upload": {"origins": "http://104.248.23.191"}})
 
 global binaryModel
 global multiClassModel
