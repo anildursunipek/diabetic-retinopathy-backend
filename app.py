@@ -5,6 +5,7 @@ import time
 import numpy as np
 import base64
 from io import BytesIO
+import gc
 
 # Our classes
 from model import DetectionModel
@@ -79,6 +80,7 @@ def upload_image():
 
         end_time = time.perf_counter()
         response_time = end_time - start_time
+        gc.collect()
 
         return jsonify({
             'original_image' : base64_image,
@@ -93,6 +95,7 @@ def upload_image():
     
     except Exception as e:
         print(e)
+        gc.collect()
         return jsonify({'error': f'No image received {e}',}), 400
 
 if __name__ == "__main__":
