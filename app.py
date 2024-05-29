@@ -73,7 +73,7 @@ def upload_image():
             multiclass_prediction_result = multiclass_prediction_result.tolist()[0]
             # print(multiclass_prediction_result[0])
         else:
-            multiclass_prediction_result = [[0.0, 0.0, 0.0, 0.0]]
+            multiclass_prediction_result = [[0.0, 0.0, 0.0]]
 
         inference_end = time.perf_counter()
         inference_time = inference_end - inference_start
